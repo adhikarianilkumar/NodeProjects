@@ -1,0 +1,23 @@
+{
+  "name": "weatherapp",
+  "version": "1.0.0",
+  "description": "Weather Application with node",
+  "main": "index.js",
+  "scripts": {
+    "start" : "node index.js",
+    "dev" : "nodemon index.js"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "ejs",
+    "request"
+  ],
+  "author": "Anilkumr Adhikari",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "request": "^2.88.2"
+  }
+}
