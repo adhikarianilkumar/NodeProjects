@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { registrationValidation, loginValidation } = require('../validation');
 
+// Saving refresh tokens(Note: save these values in Database)
+let jwtRefreshTokenArr = [];
 
 authRoute.post('/Register', async (req, res) => {
     // Data validation
@@ -45,13 +47,29 @@ authRoute.post('/Login', async (req, res) => {
     const isValidPass = await bcrypt.compare(req.body.password, user.password);
     if(!isValidPass) return res.status(400).send(`OOPS!! Wrong password.`);
 
-    // Create and jwt
-    jwt.sign({user}, process.env.TOKEN_SECRETE, { expiresIn: process.env.TOKEN_EXIREATION }, (err, data)=>{
-        if(err) return res.json({ message: err });
+    // Create jwt Access Token and Refresh Token
+    // const jwtRefreshToken = jwt.sign({user}, process.env.REFRESH_TOKEN_SECRETE);
+    // jwtRefreshTokenArr.push(jwtRefreshToken);
+    
+    // jwt.sign({user}, process.env.ACCESS_TOKEN_SECRETE, { expiresIn: process.env.TOKEN_EXIREATION }, (err, data)=>{
+    //     if(err) return res.json({ message: err });
         
-        res.header('authorization', data)
-        .send({ message: `Yey you have logged in successfully!!`, user: user, authorization: data});
-    });
+    //     res.header('authorization', data)
+    //     .send({ message: `Yey you have logged in successfully!!`, user: user, authorization: data});
+    // });
+
+    const jwtAccessToken = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRETE, { expiresIn: process.env.ACCESS_TOKEN_EXIREATION });
+    const jwtRefreshToken = jwt.sign({user}, process.env.REFRESH_TOKEN_SECRETE, { expiresIn: process.env.REFRESH_TOKEN_EXIREATION });
+    jwtRefreshTokenArr.push(jwtRefreshToken);
+
+    console.log('jwtRefreshTokenArr', jwtRefreshTokenArr);
+
+    res.header('authorization', jwtAccessToken)
+        .send({ 
+            message: `Yey you have logged in successfully!!`, 
+            user: user, 
+            jwtAccessToken: jwtAccessToken,
+            jwtRefreshToken: jwtRefreshToken});
 
 });
 
